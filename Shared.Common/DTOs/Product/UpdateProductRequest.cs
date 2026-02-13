@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.DTOs.Product
 {
-    public class UpdateProductRequest
-    {
-    }
+    public record UpdateProductRequest
+    (
+        string Name,
+        string Description,
+        decimal Price,
+        int StockQuantity,
+        string Category
+    );
 }

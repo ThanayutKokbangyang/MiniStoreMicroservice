@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.DTOs.Order
 {
-    public class UpdateOrderStatusRequest
-    {
-    }
+    public record UpdateOrderStatusRequest(
+        string Status
+    );
 }

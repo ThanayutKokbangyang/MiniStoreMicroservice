@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.DTOs.Order
 {
-    public class CreateOrderRequest
-    {
-    }
+    public record CreateOrderRequest
+    (
+        string ShippingAddress,
+        List<OrderItemRequest> Items
+    );
 }

@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.DTOs.Product
 {
-    public class ProductResponse
-    {
-    }
+    public record ProductResponse
+    (
+        int Id,
+        string Name,
+        string Description,
+        decimal Price,
+        int StockQuantity,
+        string Category,
+        string SKU,
+        DateTime CreatedAt
+    );
 }

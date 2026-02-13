@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 namespace Shared.Common.DTOs.Order
 {
     public class OrderItemResponse
-    {
-    }
+    (
+        int ProductId,
+        string ProductName,
+        int Quantity,
+        decimal UnitPrice,
+        decimal TotalPrice
+     );
 }

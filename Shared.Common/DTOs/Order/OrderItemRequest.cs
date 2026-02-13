@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.DTOs.Order
 {
-    public class OrderItemRequest
-    {
-    }
+    public record OrderItemRequest
+    (
+        int ProductId,
+        int Quantity
+    );
 }
