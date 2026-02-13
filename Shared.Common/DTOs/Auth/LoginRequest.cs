@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.DTOs.Auth
 {
-    public class LoginRequest
-    {
-         string Username { get; set; }
-         string Password { get; set; }
-    }
+    public record LoginRequest
+    (
+         string Username,
+         string Password
+    );
 }

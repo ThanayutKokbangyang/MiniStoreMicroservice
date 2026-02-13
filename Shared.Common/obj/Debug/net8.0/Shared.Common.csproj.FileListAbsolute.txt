@@ -1,0 +1,13 @@
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\bin\Debug\net8.0\Shared.Common.deps.json
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\bin\Debug\net8.0\Shared.Common.dll
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\bin\Debug\net8.0\Shared.Common.pdb
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\Shared.Common.csproj.AssemblyReference.cache
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\Shared.Common.GeneratedMSBuildEditorConfig.editorconfig
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\Shared.Common.AssemblyInfoInputs.cache
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\Shared.Common.AssemblyInfo.cs
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\Shared.Common.csproj.CoreCompileInputs.cache
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\Shared.Common.sourcelink.json
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\Shared.Common.dll
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\refint\Shared.Common.dll
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\Shared.Common.pdb
+D:\c_sharp\MiniStoreMicroservice\Shared.Common\obj\Debug\net8.0\ref\Shared.Common.dll

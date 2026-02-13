@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.DTOs.Auth
 {
-    public class TokenResponse
-    {
-         string AccessToken { get; set; }
-         string RefreshToken { get; set; }
-        
-    }
+    public record TokenResponse
+    (
+         string AccessToken,
+         string RefreshToken
+    );
 }
