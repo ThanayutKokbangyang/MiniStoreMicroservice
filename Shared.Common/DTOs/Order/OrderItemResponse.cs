@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.DTOs.Order
 {
-    public class OrderItemResponse
+    public record OrderItemResponse
     (
         int ProductId,
         string ProductName,

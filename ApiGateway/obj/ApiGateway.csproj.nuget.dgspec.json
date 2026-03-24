@@ -1,23 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\c_sharp\\MiniStoreMicroservice\\ApiGateway\\ApiGateway.csproj": {}
+    "D:\\repo\\ApiGateway\\ApiGateway.csproj": {}
   },
   "projects": {
-    "D:\\c_sharp\\MiniStoreMicroservice\\ApiGateway\\ApiGateway.csproj": {
+    "D:\\repo\\ApiGateway\\ApiGateway.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\c_sharp\\MiniStoreMicroservice\\ApiGateway\\ApiGateway.csproj",
+        "projectUniqueName": "D:\\repo\\ApiGateway\\ApiGateway.csproj",
         "projectName": "ApiGateway",
-        "projectPath": "D:\\c_sharp\\MiniStoreMicroservice\\ApiGateway\\ApiGateway.csproj",
-        "packagesPath": "C:\\Users\\taein\\.nuget\\packages\\",
-        "outputPath": "D:\\c_sharp\\MiniStoreMicroservice\\ApiGateway\\obj\\",
+        "projectPath": "D:\\repo\\ApiGateway\\ApiGateway.csproj",
+        "packagesPath": "C:\\Users\\Thanayut_k\\.nuget\\packages\\",
+        "outputPath": "D:\\repo\\ApiGateway\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\taein\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Thanayut_k\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 18.1.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 20.1.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -25,6 +27,8 @@
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\DevExpress 18.1\\Components\\System\\Components\\Packages": {},
+          "C:\\Program Files (x86)\\DevExpress 20.1\\Components\\System\\Components\\Packages": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
@@ -44,7 +48,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -82,7 +86,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
