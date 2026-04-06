@@ -12,6 +12,7 @@ namespace Shared.Common.Interfaces.Repositories
         Task<T?> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
         Task<PaginatedResponse<T>> GetPaginatedAsync(PaginationRequest request);
+        Task<int> CreateAsync(T entity);
         Task<bool> UpdateAsync(T entity);
         Task<bool> DeleteAsync(int id);
         Task<bool> HardDeleteAsync(int id);

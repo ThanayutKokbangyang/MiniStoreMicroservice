@@ -10,7 +10,7 @@ namespace Shared.Common.Interfaces.Infrastructure
     {
         Task<T?> GetAsync<T>(string key);
         Task SetAsync<T>(string key, T value, TimeSpan? expiration = null);
-        Task Remove(string key);
+        Task RemoveAsync(string key);
         Task RemoveByPrefixAsync(string prefix);
     }
 }
