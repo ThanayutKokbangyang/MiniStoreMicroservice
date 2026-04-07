@@ -8,10 +8,10 @@ namespace Shared.Common.Exceptions
 {
     public class ValidationException : AppException
     {
-        public List<string> ValidationError { get; }
+        public List<string> ValidationErrors { get; }
         public ValidationException(List<string> errors) : base("One or more validation errors occurred.", 422, "VALIDATION_ERROR")
         {
-            ValidationError = errors;
+            ValidationErrors = errors;
         }
     }
 }

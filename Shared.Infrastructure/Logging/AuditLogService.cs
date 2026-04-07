@@ -59,8 +59,6 @@ namespace Shared.Infrastructure.Logging
             catch (Exception ex) {
                 _logger.LogError(ex, "Failed to write security log for event: {EventType}", entry.EventType);
             }
-
-
         }
 
         public async Task LogSecurityEventAsync(SecurityLogEntry entry)
