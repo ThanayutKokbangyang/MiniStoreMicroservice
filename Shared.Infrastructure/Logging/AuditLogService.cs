@@ -35,11 +35,12 @@ namespace Shared.Infrastructure.Logging
                 var context = _httpContextAccessor.HttpContext;
                 using var connection = _connectionFactory.CreateConnection();
 
-                var sql = @"INSERT INTO AuditLogs
-                        (UserId, Action, EntityType, EntityId, OldValues, NewValues,
-                         IpAddress, UserAgent, ServiceName, TraceId)
-                         VALUES (@UserId, @Action, @EntityType, @EntityId, @OldValues, @NewValues,
-                                @IpAddress, @UserAgent, @ServiceName, @TraceId)";
+                var sql = @"INSERT INTO AuditLogs 
+                (UserId, Action, EntityType, EntityId, OldValues, NewValues, 
+                 IpAddress, UserAgent, ServiceName, TraceId)
+                 VALUES 
+                 (@UserId, @Action, @EntityType, @EntityId, @OldValues, @NewValues, 
+                 @IpAddress, @UserAgent, @ServiceName, @TraceId)";
 
                 await connection.ExecuteAsync(sql, new
                 {
@@ -53,11 +54,12 @@ namespace Shared.Infrastructure.Logging
                     UserAgent = context?.Request.Headers.UserAgent.ToString(),
                     entry.ServiceName,
                     TraceId = context?.TraceIdentifier
-
                 });
             }
-            catch (Exception ex) {
-                _logger.LogError(ex, "Failed to write security log for event: {EventType}", entry.EventType);
+            catch (Exception ex)
+            {
+                // Log failure ไม่ควรทำให้ main flow fail
+                _logger.LogError(ex, "Failed to write audit log for action: {Action}", entry.Action);
             }
         }
 

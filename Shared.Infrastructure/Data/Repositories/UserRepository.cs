@@ -12,15 +12,18 @@ namespace Shared.Infrastructure.Data.Repositories
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        protected override string TableName => "User";
+        protected override string TableName => "Users";
 
         public UserRepository(IDbConnectionFactory connectionFactory, ILogger<UserRepository> logger) : base(connectionFactory, logger) { }
+
+        protected override IEnumerable<string> GetAllowedSortColumns()
+     => new[] { "Id", "Username", "Email", "CreatedAt", "Role" };
 
         public override async Task<int> CreateAsync(User entity)
         {
             using var connection = _connectionFactory.CreateConnection();
-            var sql = @"INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, Rolw, CreateBy)\
-                        VALUE (@Username, @Email, @PasswordHash, @PasswordSalt, @Role, @CreateBy);
+            var sql = @"INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, Role, CreatedBy)
+                        VALUES (@Username, @Email, @PasswordHash, @PasswordSalt, @Role, @CreatedBy);
                         SELECT CAST(SCOPE_IDENTITY() as int);";
             return await connection.ExecuteScalarAsync<int>(sql, entity);
         }
@@ -30,7 +33,7 @@ namespace Shared.Infrastructure.Data.Repositories
             using var connection = _connectionFactory.CreateConnection();
             var sql = @"UPDATE Users SET 
                         Username = @Username, Email = @Email, Role = @Role,
-                        UpdateAt = GETUTCDATE(), UpdatedBy = @UpdateBy 
+                        UpdatedAt = GETUTCDATE(), UpdatedBy = @UpdatedBy
                         WHERE Id = @Id AND IsActive = 1";
             var affected = await connection.ExecuteAsync(sql, entity);
             return affected > 0;
@@ -75,7 +78,7 @@ namespace Shared.Infrastructure.Data.Repositories
         {
             using var connection = _connectionFactory.CreateConnection();
             var affected = await connection.ExecuteAsync(
-                "UPDATE Users SET FailedLoginAttemps = 0, LockoutEnd = NULL WHERE Id = @UserId", new { UserId = userId });
+                "UPDATE Users SET FailedLoginAttempts = 0, LockoutEnd = NULL WHERE Id = @UserId", new { UserId = userId });
             return affected > 0;
         }
 
@@ -83,7 +86,7 @@ namespace Shared.Infrastructure.Data.Repositories
         {
             using var connection = _connectionFactory.CreateConnection();
             var affected = await connection.ExecuteAsync("UPDATE Users SET LockoutEnd = @LockoutEnd WHERE Id = @UserId",
-                new { User = userId, LockoutEnd = lockoutEnd });
+                new { UserId = userId, LockoutEnd = lockoutEnd });
             return affected > 0;
         }
     }

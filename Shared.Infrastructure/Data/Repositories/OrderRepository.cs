@@ -13,9 +13,8 @@ namespace Shared.Infrastructure.Data.Repositories
     public class OrderRepository : GenericRepository<Order>, IOrderRepository
     {
         protected override string TableName => "Orders";
-        
-        public OrderRepository(IDbConnectionFactory connectionFactory, ILogger logger) : base(connectionFactory, logger)
-        {}
+
+        public OrderRepository(IDbConnectionFactory connectionFactory, ILogger<OrderRepository> logger): base(connectionFactory, logger) { }
 
         protected override IEnumerable<string> GetAllowedSortColumns() 
             => new[] { "Id", "OrderNumber", "TotalAmount", "Status", "CreatedAt" };

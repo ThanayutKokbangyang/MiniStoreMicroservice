@@ -9,6 +9,7 @@ namespace Shared.Common.DTOs.Auth
     public record TokenResponse
     (
          string AccessToken,
-         string RefreshToken
+         string RefreshToken,
+         DateTime ExpiresAt
     );
 }

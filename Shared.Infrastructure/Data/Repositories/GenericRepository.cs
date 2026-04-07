@@ -40,7 +40,7 @@ namespace Shared.Infrastructure.Data.Repositories
             return await connection.QueryFirstOrDefaultAsync<T>(sql, new { Id = id });
         }
 
-        public virtual async Task<IEnumerable<T>> GetAllByAsync()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             using var connection = _connectionFactory.CreateConnection();
             var sql = $"SELECT * FROM {TableName} WHERE IsActive = 1 ORDER BY CreateAt DESC";

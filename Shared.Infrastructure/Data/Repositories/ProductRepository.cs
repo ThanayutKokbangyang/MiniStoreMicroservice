@@ -15,7 +15,7 @@ namespace Shared.Infrastructure.Data.Repositories
     {
         protected override string TableName => "Products";
 
-        public ProductRepository(IDbConnectionFactory connectionFactory, ILogger<ProductRepository> logger) : base(connectionFactory, logger) {}
+        public ProductRepository(IDbConnectionFactory connectionFactory, ILogger<ProductRepository> logger) : base(connectionFactory, logger) { }
 
         protected override IEnumerable<string> GetAllowedSortColumns()
             => new[] { "Id", "Name", "Price", "StockQuantity", "Category", "CreatedAt" };
