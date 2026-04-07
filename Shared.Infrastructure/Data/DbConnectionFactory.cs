@@ -82,26 +82,27 @@ public static class DatabaseSchema
         IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Users' AND xtype='U')
         BEGIN
             CREATE TABLE Users (
-                Id              INT IDENTITY(1,1) PRIMARY KEY,
-                Username        NVARCHAR(50) NOT NULL UNIQUE,
-                Email           NVARCHAR(100) NOT NULL UNIQUE,
-                PasswordHash    NVARCHAR(500) NOT NULL,
-                PasswordSalt    NVARCHAR(500) NOT NULL,
-                Role            NVARCHAR(20) NOT NULL DEFAULT 'User',
-                FailedLoginAttempts INT NOT NULL DEFAULT 0,
-                LockoutEnd      DATETIME2 NULL,
-                RefreshToken    NVARCHAR(500) NULL,
-                RefreshTokenExpiryTime DATETIME2 NULL,
-                CreatedAt       DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-                UpdatedAt       DATETIME2 NULL,
-                CreatedBy       NVARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
-                UpdatedBy       NVARCHAR(100) NULL,
-                IsActive        BIT NOT NULL DEFAULT 1,
-                
-                INDEX IX_Users_Username NONCLUSTERED (Username),
-                INDEX IX_Users_Email NONCLUSTERED (Email),
-                INDEX IX_Users_RefreshToken NONCLUSTERED (RefreshToken)
+                Id                      INT IDENTITY(1,1) PRIMARY KEY,
+                Username                NVARCHAR(50) NOT NULL UNIQUE,
+                Email                   NVARCHAR(100) NOT NULL UNIQUE,
+                PasswordHash            NVARCHAR(500) NOT NULL,
+                PasswordSalt            NVARCHAR(500) NOT NULL,
+                Role                    NVARCHAR(20) NOT NULL DEFAULT 'User',
+                FailedLoginAttempts     INT NOT NULL DEFAULT 0,
+                LockoutEnd              DATETIME NULL,
+                RefreshToken            NVARCHAR(500) NULL,
+                RefreshTokenExpiryTime  DATETIME NULL,
+                CreatedAt               DATETIME NOT NULL DEFAULT GETUTCDATE(),
+                UpdatedAt               DATETIME NULL,
+                CreatedBy               NVARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
+                UpdatedBy               NVARCHAR(100) NULL,
+                IsActive                BIT NOT NULL DEFAULT 1
             );
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Users_RefreshToken' AND object_id = OBJECT_ID('Users'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_Users_RefreshToken ON Users(RefreshToken);
         END
 
         -- =====================================================
@@ -117,16 +118,22 @@ public static class DatabaseSchema
                 StockQuantity   INT NOT NULL DEFAULT 0,
                 Category        NVARCHAR(100) NOT NULL,
                 SKU             NVARCHAR(50) NOT NULL UNIQUE,
-                CreatedAt       DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-                UpdatedAt       DATETIME2 NULL,
+                CreatedAt       DATETIME NOT NULL DEFAULT GETUTCDATE(),
+                UpdatedAt       DATETIME NULL,
                 CreatedBy       NVARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
                 UpdatedBy       NVARCHAR(100) NULL,
-                IsActive        BIT NOT NULL DEFAULT 1,
-
-                INDEX IX_Products_Category NONCLUSTERED (Category),
-                INDEX IX_Products_SKU NONCLUSTERED (SKU),
-                INDEX IX_Products_Name NONCLUSTERED (Name)
+                IsActive        BIT NOT NULL DEFAULT 1
             );
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Products_Category' AND object_id = OBJECT_ID('Products'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_Products_Category ON Products(Category);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Products_Name' AND object_id = OBJECT_ID('Products'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_Products_Name ON Products(Name);
         END
 
         -- =====================================================
@@ -141,17 +148,23 @@ public static class DatabaseSchema
                 TotalAmount     DECIMAL(18,2) NOT NULL,
                 Status          NVARCHAR(20) NOT NULL DEFAULT 'Pending',
                 ShippingAddress NVARCHAR(500) NOT NULL,
-                CreatedAt       DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-                UpdatedAt       DATETIME2 NULL,
+                CreatedAt       DATETIME NOT NULL DEFAULT GETUTCDATE(),
+                UpdatedAt       DATETIME NULL,
                 CreatedBy       NVARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
                 UpdatedBy       NVARCHAR(100) NULL,
                 IsActive        BIT NOT NULL DEFAULT 1,
-
-                CONSTRAINT FK_Orders_Users FOREIGN KEY (UserId) REFERENCES Users(Id),
-                INDEX IX_Orders_UserId NONCLUSTERED (UserId),
-                INDEX IX_Orders_OrderNumber NONCLUSTERED (OrderNumber),
-                INDEX IX_Orders_Status NONCLUSTERED (Status)
+                CONSTRAINT FK_Orders_Users FOREIGN KEY (UserId) REFERENCES Users(Id)
             );
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Orders_UserId' AND object_id = OBJECT_ID('Orders'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_Orders_UserId ON Orders(UserId);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Orders_Status' AND object_id = OBJECT_ID('Orders'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_Orders_Status ON Orders(Status);
         END
 
         -- =====================================================
@@ -166,16 +179,24 @@ public static class DatabaseSchema
                 Quantity        INT NOT NULL,
                 UnitPrice       DECIMAL(18,2) NOT NULL,
                 TotalPrice      DECIMAL(18,2) NOT NULL,
-                CreatedAt       DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-                UpdatedAt       DATETIME2 NULL,
+                CreatedAt       DATETIME NOT NULL DEFAULT GETUTCDATE(),
+                UpdatedAt       DATETIME NULL,
                 CreatedBy       NVARCHAR(100) NOT NULL DEFAULT 'SYSTEM',
                 UpdatedBy       NVARCHAR(100) NULL,
                 IsActive        BIT NOT NULL DEFAULT 1,
-
                 CONSTRAINT FK_OrderItems_Orders FOREIGN KEY (OrderId) REFERENCES Orders(Id),
-                CONSTRAINT FK_OrderItems_Products FOREIGN KEY (ProductId) REFERENCES Products(Id),
-                INDEX IX_OrderItems_OrderId NONCLUSTERED (OrderId)
+                CONSTRAINT FK_OrderItems_Products FOREIGN KEY (ProductId) REFERENCES Products(Id)
             );
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_OrderItems_OrderId' AND object_id = OBJECT_ID('OrderItems'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_OrderItems_OrderId ON OrderItems(OrderId);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_OrderItems_ProductId' AND object_id = OBJECT_ID('OrderItems'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_OrderItems_ProductId ON OrderItems(ProductId);
         END
 
         -- =====================================================
@@ -194,14 +215,29 @@ public static class DatabaseSchema
                 IpAddress       NVARCHAR(45) NULL,
                 UserAgent       NVARCHAR(500) NULL,
                 ServiceName     NVARCHAR(100) NOT NULL,
-                Timestamp       DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-                TraceId         NVARCHAR(100) NULL,
-
-                INDEX IX_AuditLogs_UserId NONCLUSTERED (UserId),
-                INDEX IX_AuditLogs_Timestamp NONCLUSTERED (Timestamp),
-                INDEX IX_AuditLogs_EntityType NONCLUSTERED (EntityType),
-                INDEX IX_AuditLogs_TraceId NONCLUSTERED (TraceId)
+                Timestamp       DATETIME NOT NULL DEFAULT GETUTCDATE(),
+                TraceId         NVARCHAR(100) NULL
             );
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_AuditLogs_UserId' AND object_id = OBJECT_ID('AuditLogs'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_AuditLogs_UserId ON AuditLogs(UserId);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_AuditLogs_Timestamp' AND object_id = OBJECT_ID('AuditLogs'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_AuditLogs_Timestamp ON AuditLogs(Timestamp);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_AuditLogs_EntityType' AND object_id = OBJECT_ID('AuditLogs'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_AuditLogs_EntityType ON AuditLogs(EntityType);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_AuditLogs_TraceId' AND object_id = OBJECT_ID('AuditLogs'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_AuditLogs_TraceId ON AuditLogs(TraceId);
         END
 
         -- =====================================================
@@ -211,20 +247,35 @@ public static class DatabaseSchema
         BEGIN
             CREATE TABLE SecurityLogs (
                 Id              BIGINT IDENTITY(1,1) PRIMARY KEY,
-                EventType       NVARCHAR(50) NOT NULL,  -- LoginSuccess, LoginFailed, AccountLocked, etc.
+                EventType       NVARCHAR(50) NOT NULL,
                 UserId          INT NULL,
                 Username        NVARCHAR(50) NULL,
                 IpAddress       NVARCHAR(45) NULL,
                 UserAgent       NVARCHAR(500) NULL,
                 Details         NVARCHAR(MAX) NULL,
                 Severity        NVARCHAR(20) NOT NULL DEFAULT 'Info',
-                Timestamp       DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-
-                INDEX IX_SecurityLogs_EventType NONCLUSTERED (EventType),
-                INDEX IX_SecurityLogs_UserId NONCLUSTERED (UserId),
-                INDEX IX_SecurityLogs_Timestamp NONCLUSTERED (Timestamp),
-                INDEX IX_SecurityLogs_IpAddress NONCLUSTERED (IpAddress)
+                Timestamp       DATETIME NOT NULL DEFAULT GETUTCDATE()
             );
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_SecurityLogs_EventType' AND object_id = OBJECT_ID('SecurityLogs'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_SecurityLogs_EventType ON SecurityLogs(EventType);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_SecurityLogs_UserId' AND object_id = OBJECT_ID('SecurityLogs'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_SecurityLogs_UserId ON SecurityLogs(UserId);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_SecurityLogs_Timestamp' AND object_id = OBJECT_ID('SecurityLogs'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_SecurityLogs_Timestamp ON SecurityLogs(Timestamp);
+        END
+
+        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_SecurityLogs_IpAddress' AND object_id = OBJECT_ID('SecurityLogs'))
+        BEGIN
+            CREATE NONCLUSTERED INDEX IX_SecurityLogs_IpAddress ON SecurityLogs(IpAddress);
         END
     ";
 }

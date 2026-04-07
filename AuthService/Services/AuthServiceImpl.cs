@@ -56,11 +56,6 @@ namespace AuthService.Services
             return ApiResponse<TokenResponse>.SuccessResponse(new TokenResponse(accessToken, refreshToken, DateTime.UtcNow.AddMinutes(15)), "Registration successful");
         }
 
-        Task<ApiResponse<TokenResponse>> IAuthService.RegisterAsync(RegisterRequest reqeust)
-        {
-            throw new NotImplementedException();
-        }
-
         Task<ApiResponse<TokenResponse>> IAuthService.LoginAsync(LoginRequest request, string ipAddress)
         {
             throw new NotImplementedException();
