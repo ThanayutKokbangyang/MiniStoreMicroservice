@@ -56,24 +56,78 @@ namespace AuthService.Services
             return ApiResponse<TokenResponse>.SuccessResponse(new TokenResponse(accessToken, refreshToken, DateTime.UtcNow.AddMinutes(15)), "Registration successful");
         }
 
-        Task<ApiResponse<TokenResponse>> IAuthService.LoginAsync(LoginRequest request, string ipAddress)
+        public async Task<ApiResponse<TokenResponse>> LoginAsync(LoginRequest request, string ipAddress)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetByUsernameAsync(request.Username);
+            if (user == null)
+            {
+                await _auditLog.LogSecurityEventAsync(new SecurityLogEntry { EventType = "LoginFailed", Username = request.Username, Details = "User not found", Severity = "Warning" });
+                throw new UnauthorizedException("Invalid username or password.");
+            }
+
+            if (user.LockoutEnd.HasValue && user.LockoutEnd > DateTime.UtcNow)
+                throw new AccountLockedException(user.LockoutEnd.Value);
+
+            if (!PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
+            {
+                await _userRepository.IncrementFailedLoginAsync(user.Id);
+                if (user.FailedLoginAttempts + 1 >= MaxFailedAttempts)
+                {
+                    var lockoutEnd = DateTime.UtcNow.Add(LockoutDuration);
+                    await _userRepository.LockUserAsync(user.Id, lockoutEnd);
+                    await _auditLog.LogSecurityEventAsync(new SecurityLogEntry { EventType = "AccountLocked", UserId = user.Id, Username = user.Username, Severity = "Critical" });
+                    throw new AccountLockedException(lockoutEnd);
+                }
+                throw new UnauthorizedException("Invalid username or password.");
+            }
+
+            await _userRepository.ResetFailedLoginAsync(user.Id);
+            var accessToken = _tokenService.GenerateAccessToken(user);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            await _userRepository.UpdateRefreshTokenAsync(user.Id, refreshToken, DateTime.UtcNow.Add(RefreshTokenExpiry));
+
+            await _auditLog.LogSecurityEventAsync(new SecurityLogEntry { EventType = "LoginSuccess", UserId = user.Id, Username = user.Username, Severity = "Info" });
+
+            return ApiResponse<TokenResponse>.SuccessResponse(new TokenResponse(accessToken, refreshToken, DateTime.UtcNow.AddMinutes(15)));
+
         }
 
-        Task<ApiResponse<TokenResponse>> IAuthService.RefreshTokenAsync(RefreshTokenRequest request)
+        public async Task<ApiResponse<TokenResponse>> RefreshTokenAsync(RefreshTokenRequest request)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetByRefreshTokenAsync(request.RefreshToken);
+            if (user == null || user.RefreshTokenExpiryTime < DateTime.UtcNow)
+                throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+
+
+            var newAccessToken = _tokenService.GenerateAccessToken(user);
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+            await _userRepository.UpdateRefreshTokenAsync(user.Id, newRefreshToken, DateTime.UtcNow.Add(RefreshTokenExpiry));
+            return ApiResponse<TokenResponse>.SuccessResponse(new TokenResponse(newAccessToken, newRefreshToken, DateTime.UtcNow.AddMinutes(15)));
         }
 
-        Task<ApiResponse<bool>> IAuthService.ChangePasswordAsync(int userId, ChangePasswordRequest changePasswordRequest)
+        public async Task<ApiResponse<bool>> ChangePasswordAsync(int userId, ChangePasswordRequest request)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetByIdAsync(userId) ?? throw new NotFoundException("User", userId);
+            if (!PasswordHasher.VerifyPassword(request.CurrentPassword, user.PasswordHash))
+                throw new UnauthorizedAccessException("Current password is incorrect.");
+
+            var (hash, salt) = PasswordHasher.HashPassword(request.NewPassword);
+            user.PasswordHash = hash;
+            user.PasswordSalt = salt;
+            await _userRepository.UpdateAsync(user);
+
+            // Revoke all token on password change
+            await _userRepository.UpdateRefreshTokenAsync(userId, string.Empty, DateTime.UtcNow);
+            await _auditLog.LogSecurityEventAsync(new SecurityLogEntry { EventType = "PasswordChange", UserId = userId, Severity = "Info" });
+            
+            return ApiResponse<bool>.SuccessResponse(true, "Password change successfully");
         }
 
-        Task<ApiResponse<bool>> IAuthService.RevokeTokenAsync(int userId)
+        public async Task<ApiResponse<bool>> RevokeTokenAsync(int userId)
         {
-            throw new NotImplementedException();
+            await _userRepository.UpdateRefreshTokenAsync(userId, string.Empty, DateTime.UtcNow);
+            await _auditLog.LogSecurityEventAsync(new SecurityLogEntry { EventType = "TokenRevoked", UserId = userId, Severity = "Info" });
+            return ApiResponse<bool>.SuccessResponse(true, "Token revoked successfully");
         }
     }
 }
