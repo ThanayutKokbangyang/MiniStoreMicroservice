@@ -35,7 +35,7 @@ namespace Shared.Infrastructure.Data.Repositories
             var sql = @"UPDATE Products SET
                         Name = @Name, Description = @Description, Price = @Price,
                         StockQuantity = @StockQuantity, Category = @Category,
-                        UpdatedAt = GETUTCDATE(), UpdatedBy = @UpdateBy
+                        UpdatedAt = GETUTCDATE(), UpdatedBy = @UpdatedBy
                         WHERE Id = @Id AND IsActive = 1";
             return await connection.ExecuteAsync(sql, entity) > 0;
         }

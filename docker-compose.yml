@@ -1,0 +1,137 @@
+version: '3.8'
+
+services:
+  # ===== Database =====
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: microservice-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${SQL_PASSWORD:-YourStrong@Passw0rd}
+      - MSSQL_PID=Express
+    ports:
+      - "1434:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - microservice-network
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SQL_PASSWORD:-YourStrong@Passw0rd}" -Q "SELECT 1" -C -b -o /dev/null
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # ===== Seq - Centralized Logging =====
+  seq:
+    image: datalust/seq:2024.3
+    container_name: microservice-seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:80"
+      - "5342:5341"
+    volumes:
+      - seq-data:/data
+    networks:
+      - microservice-network
+    restart: unless-stopped
+
+  # ===== API Gateway =====
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: ApiGateway
+        SERVICE_PATH: ApiGateway
+    container_name: api-gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MiniStoreDB;User Id=sa;Password=${SQL_PASSWORD:-YourStrong@Passw0rd};TrustServerCertificate=true;Encrypt=true;
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY:-SuperSecretKeyForJWTThatIsAtLeast256BitsLongForHMACSHA256}
+      - Seq__Url=http://seq:80
+      - ReverseProxy__Clusters__auth-cluster__Destinations__auth-1__Address=http://auth-service-1:8080
+      - ReverseProxy__Clusters__auth-cluster__Destinations__auth-2__Address=http://auth-service-2:8080
+      - ReverseProxy__Clusters__product-cluster__Destinations__product-1__Address=http://product-service-1:8080
+    ports:
+      - "5000:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      auth-service-1:
+        condition: service_started
+    networks:
+      - microservice-network
+    restart: unless-stopped
+
+  # ===== Auth Service - Instance 1 (Load Balanced) =====
+  auth-service-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: AuthService
+        SERVICE_PATH: AuthService
+    container_name: auth-service-1
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MiniStoreDB;User Id=sa;Password=${SQL_PASSWORD:-YourStrong@Passw0rd};TrustServerCertificate=true;Encrypt=true;
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY:-SuperSecretKeyForJWTThatIsAtLeast256BitsLongForHMACSHA256}
+      - Seq__Url=http://seq:80
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - microservice-network
+    restart: unless-stopped
+
+  # ===== Auth Service - Instance 2 (Load Balanced) =====
+  auth-service-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: AuthService
+        SERVICE_PATH: AuthService
+    container_name: auth-service-2
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MiniStoreDB;User Id=sa;Password=${SQL_PASSWORD:-YourStrong@Passw0rd};TrustServerCertificate=true;Encrypt=true;
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY:-SuperSecretKeyForJWTThatIsAtLeast256BitsLongForHMACSHA256}
+      - Seq__Url=http://seq:80
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - microservice-network
+    restart: unless-stopped
+
+  # ===== Product Service - Instance 1 =====
+  product-service-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: ProductService
+        SERVICE_PATH: ProductService
+    container_name: product-service-1
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MiniStoreDB;User Id=sa;Password=${SQL_PASSWORD:-YourStrong@Passw0rd};TrustServerCertificate=true;Encrypt=true;
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY:-SuperSecretKeyForJWTThatIsAtLeast256BitsLongForHMACSHA256}
+      - Seq__Url=http://seq:80
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - microservice-network
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
+  seq-data:
+
+networks:
+  microservice-network:
+    driver: bridge

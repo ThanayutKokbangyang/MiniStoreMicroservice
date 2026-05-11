@@ -43,7 +43,7 @@ namespace Shared.Infrastructure.Data.Repositories
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             using var connection = _connectionFactory.CreateConnection();
-            var sql = $"SELECT * FROM {TableName} WHERE IsActive = 1 ORDER BY CreateAt DESC";
+            var sql = $"SELECT * FROM {TableName} WHERE IsActive = 1 ORDER BY CreatedAt DESC";
             return await connection.QueryAsync<T>(sql);
         }
 
@@ -53,8 +53,7 @@ namespace Shared.Infrastructure.Data.Repositories
 
             //WhiteList สำหรับ sort columns - ป้องกัน SQL Injection ผ่าน ORDER BY
             var allowedSortColumns = GetAllowedSortColumns();
-            var sortBy = allowedSortColumns.Contains(request.SortBy ?? "CreateAt", StringComparer.OrdinalIgnoreCase)
-                ? request.SortBy! : "CreateAt";
+            var sortBy = allowedSortColumns.Contains(request.SortBy ?? "CreatedAt", StringComparer.OrdinalIgnoreCase) ? (request.SortBy ?? "CreatedAt") : "CreatedAt";
             var sortDir = request.SortDirection?.ToUpper() == "ASC" ? "ASC" : "DESC";
 
             var offset = (request.PageNumber - 1) * request.PageSize;
