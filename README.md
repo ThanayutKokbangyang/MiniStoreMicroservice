@@ -88,7 +88,6 @@ This project demonstrates a practical microservices architecture built with **.N
 | Logging | Serilog + Seq | Structured and centralized logging |
 | Validation | FluentValidation | Request and input validation |
 | Containerization | Docker + Docker Compose | Local and production-like deployment |
-| CI/CD | GitHub Actions | Automated build and deployment pipeline |
 | Load Balancing | Nginx + YARP | SSL termination and service distribution |
 | Rate Limiting | AspNetCoreRateLimit | Basic API abuse and DDoS protection |
 
