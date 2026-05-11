@@ -14,6 +14,6 @@ namespace Shared.Common.Interfaces.Services
         Task<ApiResponse<PaginatedResponse<OrderResponse>>> GetByUserIdAsync(int userId, PaginationRequest request);
         Task<ApiResponse<OrderResponse>> CreateAsync(CreateOrderRequest request, int userId);
         Task<ApiResponse<OrderResponse>> UpdateStatusAsync(int id, UpdateOrderStatusRequest updateOrderStatusRequest);
-        Task<ApiResponse<bool>> CancelAsync(int id, int userId);
+        Task<ApiResponse<bool>> CancelOrderAsync(int id, int userId);
     }
 }

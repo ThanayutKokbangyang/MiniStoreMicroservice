@@ -8,10 +8,12 @@ namespace Shared.Common.DTOs.Order
 {
     public record OrderResponse
     (
-        int ProductId,
-        string ProductName,
-        int Quantity,
-        decimal UnitPrice,
-        decimal TotalPrice
+        int Id,
+        string OrderNumber,
+        decimal TotalAmount,
+        string Status,
+        string ShippingAddress,
+        DateTime CreatedAt,
+        List<OrderItemResponse> Items
     );
 }

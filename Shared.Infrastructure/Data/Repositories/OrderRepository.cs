@@ -65,7 +65,7 @@ namespace Shared.Infrastructure.Data.Repositories
         {
             using var connection = _connectionFactory.CreateConnection();
             return await connection.QueryAsync<OrderItem>(
-                "SELECT * FROM OrderItem WHERE OrderId = @OrderId AND IsActive = 1",
+                "SELECT * FROM OrderItems WHERE OrderId = @OrderId AND IsActive = 1",
                 new { OrderId = orderId });
 
         }

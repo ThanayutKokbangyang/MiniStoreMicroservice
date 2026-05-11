@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 		.env = .env
 		docker-compose.yml = docker-compose.yml
 		Dockerfile = Dockerfile
+		nginx.conf = nginx.conf
+		Schema.sql = Schema.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C86BA925-8719-488E-880A-2B03DF4865FD}"

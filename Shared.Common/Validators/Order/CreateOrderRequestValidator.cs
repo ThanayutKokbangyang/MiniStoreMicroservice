@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Shared.Common.Validators.Order
 {
-    internal class CreateOrderRequestValidator : AbstractValidator<CreateOrderRequest>
+    public class CreateOrderRequestValidator : AbstractValidator<CreateOrderRequest>
     {
         public CreateOrderRequestValidator()
         {

@@ -15,6 +15,8 @@ RUN dotnet restore ProductService/ProductService.csproj
 RUN dotnet restore OrderService/OrderService.csproj
 RUN dotnet restore ApiGateway/ApiGateway.csproj
 
+
+
 # Copy everything and build
 COPY . .
 
