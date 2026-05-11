@@ -31,8 +31,7 @@ This project demonstrates a practical microservices architecture built with **.N
 - 📦 Docker and Docker Compose support
 - 📊 Centralized structured logging with Serilog and Seq
 - 🛡️ Security-focused API design
-- 🚀 CI/CD ready with GitHub Actions
-
+  
 ---
 
 ## 🏛️ Architecture
