@@ -193,7 +193,6 @@ Make sure the following tools are installed before running the project:
 - .NET 8 SDK
 - Docker Desktop
 - SQL Server or SQL Server Docker image
-- `sqlcmd` command-line tool
 
 ### Local Development
 
@@ -208,17 +207,7 @@ docker run \
   -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-#### 2. Run Database Migrations
-
-```bash
-sqlcmd \
-  -S localhost \
-  -U sa \
-  -P "YourStrong@Passw0rd" \
-  -i database/migrations/V001_InitialSchema.sql
-```
-
-#### 3. Run Services
+#### 2. Run Services
 
 Open separate terminals for each service:
 
