@@ -1,6 +1,6 @@
 # Microservice Portfolio
 
-> A production-style **.NET 8 Microservices Portfolio** featuring API Gateway routing, JWT authentication, structured logging, security hardening, Docker-based deployment, and scalable service architecture.
+> **.NET 8 Microservices Portfolio** featuring API Gateway routing, JWT authentication, structured logging, security hardening, Docker-based deployment, and scalable service architecture.
 
 ---
 
