@@ -2,13 +2,13 @@ USE master;
 GO
 
 -- Create database if not exists
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'MicroserviceDB')
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'MiniStoreDB')
 BEGIN
-    CREATE DATABASE MicroserviceDB;
+    CREATE DATABASE MiniStoreDB;
 END
 GO
 
-USE MicroserviceDB;
+USE MiniStoreDB;
 GO
 
 -- Users Table
@@ -139,7 +139,7 @@ GO
 
 -- Seed Admin User (password: Admin@123456)
 INSERT INTO Users (Username, Email, PasswordHash, PasswordSalt, Role, CreatedBy)
-SELECT 'admin', 'admin@microservice.com',
+SELECT 'admin', 'admin@ministore.com',
        '$2a$12$LJ3m4ys3Sz.iYzVd2m3Ky.dummy.hash.replace.with.actual',
        '$2a$12$LJ3m4ys3Sz.iYzVd2m3Ky.',
        'Admin', 'SYSTEM'
